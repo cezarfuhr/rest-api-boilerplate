@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>REST API Boilerplate - Frontend</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>🚀 REST API Boilerplate</h1>
+        <p>Interface de demonstração da API</p>
+      </header>
+
+      <div id="auth-section" class="section">
+        <h2>Autenticação</h2>
+        <div class="tabs">
+          <button class="tab-btn active" onclick="showTab('login')">Login</button>
+          <button class="tab-btn" onclick="showTab('register')">Registrar</button>
+        </div>
+
+        <div id="login-tab" class="tab-content active">
+          <form id="login-form">
+            <input type="email" id="login-email" placeholder="Email" required />
+            <input type="password" id="login-password" placeholder="Senha" required />
+            <button type="submit">Entrar</button>
+          </form>
+        </div>
+
+        <div id="register-tab" class="tab-content">
+          <form id="register-form">
+            <input type="text" id="register-name" placeholder="Nome" required />
+            <input type="email" id="register-email" placeholder="Email" required />
+            <input type="password" id="register-password" placeholder="Senha (min. 6 caracteres)" required />
+            <button type="submit">Registrar</button>
+          </form>
+        </div>
+
+        <div id="user-info" style="display: none">
+          <h3>Usuário Logado</h3>
+          <div id="user-details"></div>
+          <button onclick="logout()">Sair</button>
+        </div>
+      </div>
+
+      <div id="posts-section" class="section" style="display: none">
+        <h2>Posts</h2>
+        <button onclick="showCreatePost()">Criar Novo Post</button>
+
+        <div id="create-post" style="display: none; margin-top: 20px">
+          <h3>Novo Post</h3>
+          <form id="create-post-form">
+            <input type="text" id="post-title" placeholder="Título" required />
+            <textarea id="post-content" placeholder="Conteúdo" rows="4"></textarea>
+            <label>
+              <input type="checkbox" id="post-published" />
+              Publicar
+            </label>
+            <button type="submit">Criar Post</button>
+            <button type="button" onclick="hideCreatePost()">Cancelar</button>
+          </form>
+        </div>
+
+        <div id="posts-list"></div>
+      </div>
+
+      <div id="message" class="message"></div>
+
+      <footer>
+        <p>
+          <a href="http://localhost:3000/api-docs" target="_blank">📚 Documentação da API</a>
+        </p>
+        <p>Desenvolvido com Node.js + Express + TypeScript + Prisma</p>
+      </footer>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
