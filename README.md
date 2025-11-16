@@ -4,13 +4,19 @@ Boilerplate completo de API REST com autenticação, validação e documentaçã
 
 ## ✨ Funcionalidades
 
-- 🔐 **Autenticação JWT** - Sistema completo de registro e login
+- 🔐 **Autenticação JWT** - Sistema completo com access e refresh tokens
+- 🔄 **Refresh Tokens** - Renovação automática de tokens de forma segura
+- 📧 **Verificação de Email** - Sistema de confirmação por email
+- 🔑 **Recuperação de Senha** - Reset de senha via email
+- 📩 **Sistema de Email** - Templates HTML responsivos com Nodemailer
 - ✅ **Validação com Zod** - Validação de dados robusta e type-safe
 - 📝 **Swagger Docs** - Documentação interativa da API
 - 🧪 **Testes Automatizados** - Suíte de testes com Jest
 - 🐳 **Docker Ready** - Containerização completa com Docker Compose
 - 📊 **Logging Estruturado** - Logs profissionais com Pino
 - 🔒 **Segurança** - Helmet, CORS, Rate Limiting
+- 🗑️ **Soft Deletes** - Recuperação de dados deletados
+- 🌱 **Database Seeds** - Dados de teste prontos para desenvolvimento
 - 🎨 **Frontend Demo** - Interface web de exemplo
 - 📦 **TypeScript** - Type safety em todo o código
 - 🗄️ **Prisma ORM** - Migrations e queries type-safe
@@ -26,11 +32,16 @@ Boilerplate completo de API REST com autenticação, validação e documentaçã
 
 ### Segurança & Validação
 - **JWT** - JSON Web Tokens para autenticação
+- **Refresh Tokens** - Tokens de longa duração seguros
 - **Bcrypt** - Hash de senhas seguro
 - **Zod** - Validação de schemas TypeScript-first
 - **Helmet** - Segurança de headers HTTP
 - **CORS** - Cross-Origin Resource Sharing
 - **Rate Limiting** - Proteção contra abuso
+
+### Comunicação
+- **Nodemailer** - Envio de emails transacionais
+- **HTML Email Templates** - Templates responsivos personalizados
 
 ### Testes & Qualidade
 - **Jest** - Framework de testes
@@ -107,7 +118,7 @@ Acesse a documentação interativa em: `http://localhost:3000/api-docs`
 
 #### Autenticação
 
-**POST** `/api/v1/auth/register`
+**POST** `/api/v1/auth/register` - Criar nova conta
 ```json
 {
   "name": "João Silva",
@@ -116,7 +127,7 @@ Acesse a documentação interativa em: `http://localhost:3000/api-docs`
 }
 ```
 
-**POST** `/api/v1/auth/login`
+**POST** `/api/v1/auth/login` - Fazer login
 ```json
 {
   "email": "joao@example.com",
@@ -124,8 +135,44 @@ Acesse a documentação interativa em: `http://localhost:3000/api-docs`
 }
 ```
 
-**GET** `/api/v1/auth/me`
+**POST** `/api/v1/auth/refresh` - Renovar access token
+```json
+{
+  "refreshToken": "your-refresh-token"
+}
+```
+
+**POST** `/api/v1/auth/logout` - Fazer logout
+```json
+{
+  "refreshToken": "your-refresh-token"
+}
+```
+
+**GET** `/api/v1/auth/me` - Obter dados do usuário logado
 Headers: `Authorization: Bearer <token>`
+
+**POST** `/api/v1/auth/verify-email` - Verificar email
+```json
+{
+  "token": "verification-token-from-email"
+}
+```
+
+**POST** `/api/v1/auth/forgot-password` - Solicitar reset de senha
+```json
+{
+  "email": "joao@example.com"
+}
+```
+
+**POST** `/api/v1/auth/reset-password` - Redefinir senha
+```json
+{
+  "token": "reset-token-from-email",
+  "password": "newpassword123"
+}
+```
 
 #### Usuários
 
@@ -186,12 +233,16 @@ rest-api-boilerplate/
 Este boilerplate implementa as seguintes medidas de segurança:
 
 - ✅ Senhas hasheadas com bcrypt (10 rounds)
-- ✅ Autenticação JWT com expiração configurável
+- ✅ Autenticação JWT com access e refresh tokens
+- ✅ Tokens de curta duração (access) e longa duração (refresh)
+- ✅ Email verification obrigatória (configurável)
+- ✅ Password reset seguro com tokens temporários
 - ✅ Headers de segurança com Helmet
 - ✅ CORS configurável
 - ✅ Rate limiting para prevenir abuso
 - ✅ Validação de entrada com Zod
 - ✅ SQL Injection protection via Prisma
+- ✅ Soft deletes para recuperação de dados
 - ✅ Logs estruturados para auditoria
 
 ## 🌱 Variáveis de Ambiente
@@ -202,11 +253,21 @@ Este boilerplate implementa as seguintes medidas de segurança:
 | `PORT` | Porta do servidor | `3000` |
 | `API_VERSION` | Versão da API | `v1` |
 | `DATABASE_URL` | URL de conexão do PostgreSQL | - |
-| `JWT_SECRET` | Chave secreta do JWT | - |
-| `JWT_EXPIRES_IN` | Tempo de expiração do token | `7d` |
+| `JWT_SECRET` | Chave secreta do JWT (access token) | - |
+| `JWT_EXPIRES_IN` | Tempo de expiração do access token | `15m` |
+| `JWT_REFRESH_SECRET` | Chave secreta do refresh token | - |
+| `JWT_REFRESH_EXPIRES_IN` | Tempo de expiração do refresh token | `7d` |
 | `CORS_ORIGIN` | Origem permitida para CORS | `http://localhost:3001` |
 | `RATE_LIMIT_WINDOW_MS` | Janela de rate limiting (ms) | `900000` |
 | `RATE_LIMIT_MAX_REQUESTS` | Máximo de requisições por janela | `100` |
+| `SMTP_HOST` | Servidor SMTP para emails | `smtp.gmail.com` |
+| `SMTP_PORT` | Porta do servidor SMTP | `587` |
+| `SMTP_USER` | Usuário SMTP | - |
+| `SMTP_PASSWORD` | Senha SMTP | - |
+| `SMTP_FROM` | Email remetente | `noreply@yourapp.com` |
+| `SMTP_FROM_NAME` | Nome do remetente | `Your App` |
+| `FRONTEND_URL` | URL do frontend | `http://localhost:3001` |
+| `BACKEND_URL` | URL do backend | `http://localhost:3000` |
 
 ## 📦 Scripts Disponíveis
 
@@ -219,6 +280,7 @@ npm run test:watch       # Executa testes em modo watch
 npm run test:coverage    # Gera relatório de cobertura
 npm run prisma:generate  # Gera Prisma Client
 npm run prisma:migrate   # Executa migrations
+npm run prisma:seed      # Popula banco com dados de teste
 npm run prisma:studio    # Abre Prisma Studio
 npm run lint             # Executa ESLint
 npm run format           # Formata código com Prettier
@@ -273,6 +335,25 @@ npx prisma migrate reset
 # Abrir Prisma Studio
 npx prisma studio
 ```
+
+## 🌱 Database Seeds
+
+O projeto inclui seeds prontos para popular o banco com dados de teste.
+
+```bash
+# Popular banco de dados
+npm run prisma:seed
+```
+
+**Dados criados:**
+- 1 usuário admin: `admin@example.com` / `admin123`
+- 3 usuários regulares:
+  - `john@example.com` / `user123` (email verificado)
+  - `jane@example.com` / `user123` (email verificado)
+  - `bob@example.com` / `user123` (email não verificado)
+- 6 posts (5 publicados, 1 rascunho)
+
+Os seeds são executados automaticamente com `npm run prisma:migrate` em ambiente de desenvolvimento.
 
 ## 📈 Monitoramento e Logs
 
